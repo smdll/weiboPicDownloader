@@ -6,6 +6,7 @@ import time, os, json, re, datetime, math, operator
 import concurrent.futures
 import requests
 import argparse
+import random
 
 try:
     reload(sys)
@@ -53,11 +54,6 @@ parser.add_argument(
     '-r', metavar = 'retry', dest = 'retry',
     default = 2, type = int,
     help = 'set maximum number of retries'
-)
-parser.add_argument(
-    '-i', metavar = 'interval', dest = 'interval',
-    default = 1, type = float,
-    help = 'set interval for feed requests'
 )
 parser.add_argument(
     '-c', metavar = 'cookie', dest = 'cookie',
@@ -208,7 +204,7 @@ def compare(standard, operation, candidate):
         except TypeError:
             pass
 
-def get_resources(uid, video, interval, limit):
+def get_resources(uid, video, limit):
     page = 1
     size = 25
     amount = 0
@@ -256,7 +252,7 @@ def get_resources(uid, video, interval, limit):
             print_fit('{} {}(#{})'.format('analysing weibos...' if empty < aware and not exceed else 'finish analysis', progress(amount, total), page), pin = True)
             page += 1
         finally:
-            time.sleep(interval)
+            time.sleep(random.randrange(3, 5))
 
     print_fit('\npractically scan {} weibos, get {} {}'.format(amount, len(resources), 'resources' if video else 'pictures'))
     return resources
@@ -355,7 +351,7 @@ for number, user in enumerate(users, 1):
     print_fit('{} {}'.format(nickname, uid))
     
     try:
-        resources = get_resources(uid, args.video, args.interval, boundary)
+        resources = get_resources(uid, args.video, boundary)
     except KeyboardInterrupt:
         quit()
 
